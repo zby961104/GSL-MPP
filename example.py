@@ -1,20 +1,17 @@
 from TrainingFramework.ProcessControllers import *
 
-# seed search
-
 ExpOptions = {
     'Search': 'greedy',
     'SeedPerOpt': 3,
     'SeedSearch': False,
-    'TorchSeed': 8,
 }
 
 BasicParamList = {
-    'ExpName': 'BACE',
+    'ExpName': 'BBBP',
     'MainMetric': 'AUC',
-    'DataPath': './Datasets/DrugData/BACE_SMILESValue.txt',
+    'DataPath': './Datasets/DrugData/BBBP_SMILESValue.txt',
     'RootPath': '/remote-home/byzhao/Experiments/GSL-MPP/try/',
-    'CUDA_VISIBLE_DEVICES': '1',
+    'CUDA_VISIBLE_DEVICES': '2',
     'TaskNum': 1,
     'ClassNum': 2,
     'OutputSize': 2,
@@ -34,14 +31,14 @@ BasicParamList = {
     'SplitRate': [0.8, 0.1],
     'Splitter': 'Scaffold',
     'MaxEpoch': 300,
-    'LowerThanMaxLimit': 100,
-    'DecreasingLimit': 50,
+    'LowerThanMaxLimit': 50,
+    'DecreasingLimit': 30,
 
     'Scheduler': 'PolynomialDecayLR',
 
     # Params for PolynomialDecayLR only
     'WarmupEpoch': 2,
-    'LRMaxEpoch': 10,
+    'LRMaxEpoch': 300,
     'EndLR':1e-9,
     'Power':1.0,
     # Params for StepLR only
@@ -52,8 +49,8 @@ BasicParamList = {
     'WeightIniter': None,            #Choice: Norm, XavierNorm
 
     # Params for NormWeightIniter only
-    'InitMean': 0,
-    'InitStd': 1,
+    'InitMean' : 0,
+    'InitStd' : 1,
 
     #####################################
 
@@ -89,6 +86,7 @@ BasicParamList = {
 
     'rel_dropout': 0,
     'rel_dropout2': 0.2,
+    'adj_loss': True,
 
     # Params for PyGGIN only
 
@@ -118,79 +116,82 @@ BasicParamList = {
 }
 AdjustableParamList = {
     'FPSize' : [128, 32, 64, 150, 200],
-    'GINLayers': [5,2,3,4],
-    'GINInputSize': [128,32,64,256],
+    'GINLayers': [2,5,3,4],
+    'GINInputSize': [32,128,64,256],
     'GINHiddenSize': [32,64,128,256],
     'GINTrainEps':[True, False],
-    'GINReadout': ['Add', 'Mean','Max'],
+    'GINReadout': ['Max', 'Add', 'Mean'],
     'DropRate' : [0.0, 0.1, 0.2, 0.3, 0.4, 0.5],
 
     'map_dim': [32, 64, 128],
-    'map_layer': [2,0, 1,  3],
-    'map_dropout': [0.2,0.1,  0.3, 0],
+    'map_layer': [0, 2, 1,  3],
+    'map_dropout': [0.1, 0.2, 0.3, 0],
 
-    # 'init_adj_epsilon': [0.3, 0.0, 0.1, 0.2, 0.5, 0.7],
+    # 'init_adj_epsilon': [0.7, 0.2, 0.3, 0.0, 0.1, 0.5],
     'rel_layer': [4,3, 1, 2, 5],
-    'rel_hidden_dim': [128,32, 64,  256],
+    'rel_hidden_dim': [256, 128,32, 64],
     'rel_gnn_layer': [2, 3],
     'rel_epsilon': [0.0, 0.1, 0.2, 0.5],
-    'rel_num_pers': [ 8, 1, 2, 4,16],
-    'rel_res': [0.2, 0, 0.1,  0.5, 1.0],
-    'rel_metric': ['weighted_cosine', 'attention', 'gat_attention', 'kernel', 'transformer', 'cosine'],
+    'rel_num_pers': [8, 1, 2, 4,16],
+    'rel_res': [1.0, 0.2, 0, 0.1,  0.5],
+    # 'rel_metric': ['weighted_cosine', 'attention', 'gat_attention', 'kernel', 'transformer', 'cosine'],
     'rel_dropout': [0.0, 0.1, 0.2, 0.4, 0.6],
-    'rel_dropout2': [0.0, 0.1, 0.2, 0.4, 0.6],
-    'graph_skip_conn': [0.7, 0.9, 0.5, 0.3, 0.1],
-    'update_adj_ratio': [0.6, 0.1, 0.3, 0.8, 1.0],
+    'rel_dropout2': [0.1, 0.0, 0.2, 0.4, 0.6],
+    'graph_skip_conn': [0.8, 0.7, 0.9, 0.5, 0.3, 0.1],
+    'update_adj_ratio': [0.1, 0.3, 0.6, 0.8, 1.0],
 
-    'lr': [3.5, 3, 2.5, 2, 4],
+    'adj_loss_weight': [0.5, 0.3, 0.1, 0.7, 0.9],
+
+    'lr': [2.5, 3.5, 3, 2, 4],
     'WeightDecay': [5, 4, 4.5, 3.5, 3],
 
-    'TorchSeed': [8, 42, 1234, 3407, 114514, 147258, 0, 1, 2],
+    'TorchSeed': [42, 8, 1234, 3407, 114514, 147258, 0, 1, 2],
 
 }
 SpecificParamList = {
-    'TorchSeed': [8],
+    'TorchSeed': [42],
     'SplitSeedBias': [0],
-    'lr': [3.5],
+    'lr': [2.5],
     'WeightDecay': [5],
 
     'adj_loss': [True],
-    'adj_loss_weight': [1.0],
+    'adj_loss_weight': [0.5],
     'adjust init adj epsilon': [False],
     'init_adj_epsilon': [0.2],
-    'init_adj_norm': [False],
+    'init_adj_norm': [True],
+    'return_raw_adj': [False],
 
     'rel_layer': [4],
 
     'rel_metric': ['weighted_cosine'],
     'rel_num_pers': [8],
 
-    'rel_hidden_dim': [128],
+    'rel_hidden_dim': [256],
     'rel_gnn': ['gcn'],
     'rel_gnn_layer': [2],
     'rel_batch_norm': [True],
 
     'rel_epsilon': [0.0],
-    'rel_res': [0.2],
+    'rel_res': [1.0],
     'rel_dropout': [0],
-    'rel_dropout2': [0.0],
-    'graph_skip_conn': [0.7],
-    'update_adj_ratio': [0.6],
+    'rel_dropout2': [0.1],
+    'graph_skip_conn': [0.8],
+    'update_adj_ratio': [0.1],
 
-    'FPSize': [128],
+    'FPSize': [32],
 
-    'GINLayers': [5],
-    'GINInputSize': [128],
+    'GINLayers': [2],
+    'GINInputSize': [32],
     'GINHiddenSize': [32],
     # 'GINEps': 0.1,
-    'GINReadout': ['Add'],
+    'GINReadout': ['Max'],
     'GINTrainEps': [True],
     'DropRate': [0],
 
     # Params for map-encoder of GslMol
     'map_dim': [32],
-    'map_layer': [2],
-    'map_dropout': [0.2],
+    'map_layer': [0],
+    'map_dropout': [0.1],
 }
 
 expcontroller = ExperimentProcessController(ExpOptions, [BasicParamList, AdjustableParamList, SpecificParamList])
